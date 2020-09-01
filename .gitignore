@@ -1,3 +1,4 @@
 authconfig.py
 __pycache__
 *.csv
+test.py

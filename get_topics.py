@@ -2,6 +2,7 @@
 import tweepy
 import json
 import authconfig
+import pandas as pd
 
 # tweepy authentication
 
@@ -27,13 +28,22 @@ for trends in api.trends_available():
 # combine the two dictionaries
 city_country_names_woeid = {**city_names_woeid, **country_names_woeid}
 
+# list of topics
+topics = []
+
 try:
-    city_country_trends = api.trends_place(city_country_names_woeid['South Africa'])
+    city_country_trends = api.trends_place(city_country_names_woeid['Kenya'])
 
     trends = json.loads(json.dumps(city_country_trends, indent=1))
 
     for trend in trends[0]["trends"][:10]:      # top ten trends
-        print(trend["name"])#.strip("#"))
+        topics.append((trend["name"]))
+        #print(trend["name"])#.strip("#"))
+        #print(trend["name"])
 
 except KeyError as e:
     print(f"There is no trending topic information for the currently selected city/country: {e}")
+
+# save the topics as csv file(pandas series)
+topics = pd.DataFrame({'topics': topics})
+topics.to_csv("csv files/topics.csv", index=False)
