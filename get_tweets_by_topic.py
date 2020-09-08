@@ -11,7 +11,7 @@ api = tweepy.API(auth)
 
 def tweets_by_word_search(word):
     # Cursor(pagination)
-    result = tweepy.Cursor(api.search, q=word).items(100000) # adjust items accordingly
+    result = tweepy.Cursor(api.search, q=word).items(50000) # adjust items accordingly
 
     tweet_id = []
     tweets = []
@@ -38,16 +38,14 @@ def tweets_by_word_search(word):
         except tweepy.TweepError as e:
             print(f"\nPlease wait...proceeding in a few minutes.\n({e})\n")
             time.sleep(15 * 60)
-            continue
+            #continue
+            break
 
 
 # Calling the function on every topic in topics.csv
 topics = pd.read_csv("csv files/topics.csv")
 topics = list(topics.topics)
 
+
 for topic in topics:
-
-    end_time = time.time() + 60 * 10  # 10 minutes
-
-    while time.time() < end_time:
-        tweets_by_word_search(topic)
+    tweets_by_word_search(topic)
