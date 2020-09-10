@@ -1,15 +1,29 @@
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
-import authconfig
+import pandas as pd
+import authconfig   # script
+import get_topics   # script
+import datetime
 
-msg = MIMEMultipart()
+# today's date
+now = datetime.datetime.now()
+
+# read in the list of sorted topics
+topics = pd.read_csv("csv files/sortopics.csv")
+topics = [topic.strip(".csv") for topic in list(topics.topics)]
+
 toaddr = ['vinsvincybiex@gmail.com']
 fromaddr = authconfig.email
+subject = "Trending topics in {} for {}".format(get_topics.country, now.strftime("%Y-%m-%d"))
+
+msg = MIMEMultipart()
 #cc = ['mailid_3','mailid_4']
 #bcc = ['mailid_5','mailid_6']
-subject = 'Final test - Email from Python Code'
-body = MIMEText("\n  !! Hello... !!")
+body = ''
+for topic in topics:
+    body = body + "\n {}".format(topic)
+body = MIMEText(body)
 msg.attach(body)
 
 msg['From'] = fromaddr

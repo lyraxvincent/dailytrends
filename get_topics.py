@@ -31,8 +31,11 @@ city_country_names_woeid = {**city_names_woeid, **country_names_woeid}
 # list of topics
 topics = []
 
+# the country in question
+country = 'Kenya'
+
 try:
-    city_country_trends = api.trends_place(city_country_names_woeid['Kenya'])
+    city_country_trends = api.trends_place(city_country_names_woeid[country])
 
     trends = json.loads(json.dumps(city_country_trends, indent=1))
 
