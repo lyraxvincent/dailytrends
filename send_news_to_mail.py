@@ -22,7 +22,7 @@ msg = MIMEMultipart()
 #bcc = ['mailid_5','mailid_6']
 body = ''
 for topic in topics:
-    body = body + "\n {}".format(topic)
+    body += "\n {}".format(topic)
 body = MIMEText(body)
 msg.attach(body)
 
