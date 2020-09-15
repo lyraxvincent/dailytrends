@@ -5,13 +5,14 @@ import pandas as pd
 import authconfig   # script
 import get_topics   # script
 import datetime
+from summarize import get_summary
 
 # today's date
 now = datetime.datetime.now()
 
 # read in the list of sorted topics
 topics = pd.read_csv("csv files/sortopics.csv")
-topics = [topic.strip(".csv") for topic in list(topics.topics)]
+topics = [topic for topic in list(topics.topics)]
 
 toaddr = ['vinsvincybiex@gmail.com']
 fromaddr = authconfig.email
@@ -22,7 +23,12 @@ msg = MIMEMultipart()
 #bcc = ['mailid_5','mailid_6']
 body = ''
 for topic in topics:
-    body += "\n {}".format(topic)
+    df = pd.read_csv(f"csv files/{topic}")
+    print(f"Getting summary for topic: [{topic.strip('.csv')}]")
+    summary = get_summary(df)
+    body += "\n {}\nAbout {}\n===================================\n{}\n".format(topic.strip('.csv').strip('#').upper(),
+                                                                                topic.strip('.csv'), summary)
+
 body = MIMEText(body)
 msg.attach(body)
 

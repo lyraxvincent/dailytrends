@@ -7,24 +7,6 @@ import heapq
 from tqdm import tqdm
 import language_tool_python
 
-# read in a csv file
-df = pd.read_csv("csv files/#OmwengaMurderDppExposed.csv")
-
-"""
-### Text preprocessing steps:
-- remove links
-- remove hashtags
-- remove special characters (preserving fullstops since they mark end of sentence and we're doing summarization 
-  based off of sentence weights, also preserve single quotes)
-- remove numbers
-- remove emojis and emoticons
-- correct spelling
-- stripping the text
-- put a fullstop at the end of each preprocessed tweet if there is not one
-- make the first letter of preprocessed tweets a capital letter if it isn't the case
-"""
-
-# function to do the preprocessing
 punctuation = '!"#$%&\()*+,-/:;<=>?@[\\]^_`{|}~…' # removed fullstop and single quote
 emoj = re.compile("["
         u"\U0001F600-\U0001F64F"  # emoticons
@@ -47,7 +29,22 @@ emoj = re.compile("["
         u"\u3030"
                       "]+", re.UNICODE)
 
+# text preprocessing function
 def text_process(text):
+    """
+    ### Text preprocessing steps:
+    - remove links
+    - remove hashtags
+    - remove special characters (preserving fullstops since they mark end of sentence and we're doing summarization
+      based off of sentence weights, also preserve single quotes)
+    - remove numbers
+    - remove emojis and emoticons
+    - correct spelling
+    - strip the text
+    - put a fullstop at the end of each preprocessed tweet if there is not one
+    - make the first letter of preprocessed tweets a capital letter if it isn't the case
+    """
+
     text = re.sub(r'https?://\S+|www\.\S+', repl=r'', string=text)
     text = text.split()
     text = ' '.join([word for word in text if not word.startswith("#")])
@@ -77,74 +74,77 @@ def text_processdig(text):
         text = text[0].upper() + text[1:]
     return text
 
-# designing documents of preprocessed texts joined together
-doc_without_numbers = ""
 
-for tweet in tqdm(df.text, desc="Designing preprocessed document:"):
-    tweet = text_process(tweet)
-    doc_without_numbers += tweet
+def get_summary(df):
 
-doc_with_numbers = ""
+    # designing documents of preprocessed texts joined together
+    doc_without_numbers = ""
 
-for tweet in tqdm(df.text, desc="Designing document preserving numbers:"):
-    tweet = text_processdig(tweet)
-    doc_with_numbers += tweet
+    for tweet in tqdm(df.text, desc="Designing preprocessed document:"):
+        tweet = text_process(tweet)
+        doc_without_numbers += tweet
 
-# converting document to recognizable sentences
-sentence_list = nltk.sent_tokenize(doc_with_numbers)
+    doc_with_numbers = ""
 
-# find weighted frequency of occurence of each word(using preprocessed document; without numbers)
-stopwords = nltk.corpus.stopwords.words('english')
+    for tweet in tqdm(df.text, desc="Designing document preserving numbers:"):
+        tweet = text_processdig(tweet)
+        doc_with_numbers += tweet
 
-word_frequencies = {}
-for word in nltk.word_tokenize(doc_without_numbers):
-    if word not in stopwords:
-        if word not in word_frequencies.keys():
-            word_frequencies[word] = 1
-        else:
-            word_frequencies[word] += 1
+    # converting document to recognizable sentences
+    sentence_list = nltk.sent_tokenize(doc_with_numbers)
 
-# to find the weighted frequency, we can simply divide the number of occurances of
-# all the words by the frequency of the most occurring word
+    # find weighted frequency of occurence of each word(using preprocessed document; without numbers)
+    stopwords = nltk.corpus.stopwords.words('english')
 
-maximum_frequncy = max(word_frequencies.values())
+    word_frequencies = {}
+    for word in nltk.word_tokenize(doc_without_numbers):
+        if word not in stopwords:
+            if word not in word_frequencies.keys():
+                word_frequencies[word] = 1
+            else:
+                word_frequencies[word] += 1
 
-for word in word_frequencies.keys():
-    word_frequencies[word] = (word_frequencies[word] / maximum_frequncy)
+    # to find the weighted frequency, we can simply divide the number of occurances of
+    # all the words by the frequency of the most occurring word
 
-# calculating sentence scores
-sentence_scores = {}
-for sent in sentence_list:
-    for word in nltk.word_tokenize(sent.lower()):
-        if word in word_frequencies.keys():
-            if len(sent.split(' ')) > 3 & len(sent.split(' ')) < 20:
-                if sent not in sentence_scores.keys():
-                    sentence_scores[sent] = word_frequencies[word]
-                else:
-                    sentence_scores[sent] += word_frequencies[word]
+    maximum_frequncy = max(word_frequencies.values())
 
+    for word in word_frequencies.keys():
+        word_frequencies[word] = (word_frequencies[word] / maximum_frequncy)
 
-# Getting summary from sentences with higher score than others
-#Taking care of shorter and extremely longer summaries
-#   - summaries below 3000 characters
-#   - summaries over  4500 characters
-n = 5
-
-summary_sentences = heapq.nlargest(n, sentence_scores, key=sentence_scores.get)
-summary = ' '.join(summary_sentences)
-
-if len(summary) < 3000:
-    while len(summary) < 4300:
-        if n + 3 < len(sentence_list):
-            n = n + 3
-        summary_sentences = heapq.nlargest(n, sentence_scores, key=sentence_scores.get)
-
-summary = ' '.join(summary_sentences)
+    # calculating sentence scores
+    sentence_scores = {}
+    for sent in sentence_list:
+        for word in nltk.word_tokenize(sent.lower()):
+            if word in word_frequencies.keys():
+                if len(sent.split(' ')) > 3 & len(sent.split(' ')) < 20:
+                    if sent not in sentence_scores.keys():
+                        sentence_scores[sent] = word_frequencies[word]
+                    else:
+                        sentence_scores[sent] += word_frequencies[word]
 
 
-# correcting errors in sentences
-tool = language_tool_python.LanguageTool('en-US')
-matches = tool.check(summary)
-summary = tool.correct(summary)
+    # Getting summary from sentences with higher score than others
+    #Taking care of shorter and extremely longer summaries
+    #   - summaries below 3000 characters
+    #   - summaries over  4500 characters
+    n = 5
 
-print(summary)
+    summary_sentences = heapq.nlargest(n, sentence_scores, key=sentence_scores.get)
+    summary = ' '.join(summary_sentences)
+
+    if len(summary) < 3000:
+        while len(summary) < 4300:
+            if n + 3 < len(sentence_list):
+                n = n + 3
+            summary_sentences = heapq.nlargest(n, sentence_scores, key=sentence_scores.get)
+
+    summary = ' '.join(summary_sentences)
+
+
+    # correcting errors in sentences
+    tool = language_tool_python.LanguageTool('en-US')
+    matches = tool.check(summary)
+    summary = tool.correct(summary)
+
+    return summary
