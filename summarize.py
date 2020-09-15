@@ -133,8 +133,8 @@ def get_summary(df):
     summary_sentences = heapq.nlargest(n, sentence_scores, key=sentence_scores.get)
     summary = ' '.join(summary_sentences)
 
-    if len(summary) < 3000:
-        while len(summary) < 4500:
+    if len(summary) < 1500:
+        while len(summary) < 2500:
             if n + 3 < len(sentence_list):
                 n = n + 3
             summary_sentences = heapq.nlargest(n, sentence_scores, key=sentence_scores.get)
@@ -144,7 +144,6 @@ def get_summary(df):
 
     # correcting errors in sentences
     tool = language_tool_python.LanguageTool('en-US')
-    matches = tool.check(summary)
     summary = tool.correct(summary)
 
     return summary

@@ -26,7 +26,8 @@ for topic in topics:
     df = pd.read_csv(f"csv files/{topic}")
     print(f"Getting summary for topic: [{topic.strip('.csv')}]")
     summary = get_summary(df)
-    body += "\n {}\nAbout {}\n===================================\n{}\n".format(topic.strip('.csv').strip('#').upper(),
+    body += "\n {}\nAbout {}\n===================================\n{}\n".format(topic.split('.csv')[0] \
+                                                                                .strip('#').upper(),
                                                                                 topic.strip('.csv'), summary)
 
 body = MIMEText(body)
