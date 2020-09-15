@@ -24,7 +24,7 @@ def tweets_by_word_search(word):
         try:
             for i, tweet in enumerate(result):
                 # Filter out retweets and other languages
-                if 'RT @' not in tweet.text and tweet.lang == 'en':
+                if 'RT @' not in tweet.text and 'https:/' not in tweet.text and tweet.lang == 'en':
                     print('Getting tweet: {}'.format(tweet.id))
                     tweet_id.append(tweet.id)
                     tweets.append(tweet.text)
