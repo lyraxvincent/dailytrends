@@ -1,5 +1,4 @@
 # necessary imports
-import pandas as pd
 import nltk
 import re
 from textblob import TextBlob
