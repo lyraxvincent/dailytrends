@@ -134,7 +134,7 @@ def get_summary(df):
     summary = ' '.join(summary_sentences)
 
     if len(summary) < 3000:
-        while len(summary) < 4300:
+        while len(summary) < 4500:
             if n + 3 < len(sentence_list):
                 n = n + 3
             summary_sentences = heapq.nlargest(n, sentence_scores, key=sentence_scores.get)
