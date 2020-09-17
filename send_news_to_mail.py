@@ -33,7 +33,7 @@ for topic in topics:
 body = MIMEText(body)
 msg.attach(body)
 
-msg['From'] = fromaddr
+msg['From'] = 'Vincent N.W.'
 msg['To'] = ', '.join(toaddr)
 #msg['Cc'] = ', '.join(cc)
 #msg['Bcc'] = ', '.join(bcc)
