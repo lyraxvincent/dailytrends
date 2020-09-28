@@ -39,7 +39,7 @@ try:
 
     trends = json.loads(json.dumps(city_country_trends, indent=1))
 
-    for trend in trends[0]["trends"][:10]:      # top ten trends
+    for trend in trends[0]["trends"][:5]:      # top five trends
         topics.append((trend["name"]))
         #print(trend["name"])#.strip("#"))
         #print(trend["name"])
