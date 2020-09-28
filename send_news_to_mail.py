@@ -18,20 +18,35 @@ toaddr = ['vinsvincybiex@gmail.com']
 fromaddr = authconfig.email
 subject = "Trending topics in {} for {}".format(get_topics.country, now.strftime("%Y-%m-%d"))
 
-msg = MIMEMultipart()
+msg = MIMEMultipart('alternative')
 #cc = ['mailid_3','mailid_4']
 #bcc = ['mailid_5','mailid_6']
+
 body = ''
 for topic in topics:
     df = pd.read_csv(f"csv files/{topic}")
     print(f"Getting summary for topic: [{topic.strip('.csv')}]")
     summary = get_summary(df)
-    body += "\n {}\nAbout {}\n===================================\n{}\n".format(topic.split('.csv')[0] \
-                                                                                .strip('#').upper(),
-                                                                                topic.strip('.csv'), summary)
+    html = """
+            <html>
+              <head></head>
+              <h1>{}</h1>
+              <h3>About {}</h1>
+              <hr style="height:2px;border-width:1px;color:gray;background-color:gray">
+              <body>
+                <p>
+                {}
+                </p>
+                <hr style="height:2px;border-width:1px;color:gray;background-color:gray">
+                <hr>
+              </body>
+              
+            </html>
+        """.format(topic.split('.csv')[0].strip('#').upper(), topic.strip('.csv'), summary)
 
-body = MIMEText(body)
-msg.attach(body)
+    body += html
+    
+msg.attach(MIMEText(body, 'html'))
 
 msg['From'] = 'Vincent N.W.'
 msg['To'] = ', '.join(toaddr)
