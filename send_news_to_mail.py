@@ -45,7 +45,7 @@ for topic in topics:
         """.format(topic.split('.csv')[0].strip('#').upper(), topic.strip('.csv'), summary)
 
     body += html
-    
+
 msg.attach(MIMEText(body, 'html'))
 
 msg['From'] = 'Vincent N.W.'
