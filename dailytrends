@@ -1,0 +1,6 @@
+python3 delprevfiles.py
+python3 get_topics.py
+python3 get_tweets_by_topic.py
+python3 sort_csv.py
+python3 cleanfiles.py
+python3 send_news_to_mail.py
