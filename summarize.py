@@ -125,14 +125,14 @@ def get_summary(df):
 
     # Getting summary from sentences with higher score than others
     #Taking care of shorter and extremely longer summaries
-    #   - summaries below 3000 characters
-    #   - summaries over  4500 characters
+    #   - summaries below 1500 characters
+    #   - summaries over  2500 characters
     n = 5
 
     summary_sentences = heapq.nlargest(n, sentence_scores, key=sentence_scores.get)
     summary = ' '.join(summary_sentences)
 
-    if len(summary) < 1500:
+    if len(summary) < 1500 and len(' '.join(df.text)) > 1500:
         while len(summary) < 2500:
             if n + 3 < len(sentence_list):
                 n = n + 3
