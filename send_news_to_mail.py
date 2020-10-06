@@ -5,7 +5,7 @@ import pandas as pd
 import authconfig   # script
 import get_topics   # script
 import datetime
-from summarize import get_summary
+from summarize import get_summary   # script
 
 # today's date
 now = datetime.datetime.now()
@@ -22,27 +22,28 @@ msg = MIMEMultipart('alternative')
 #cc = ['mailid_3','mailid_4']
 #bcc = ['mailid_5','mailid_6']
 
-body = ''
+body = ""
 for topic in topics:
     df = pd.read_csv(f"csv files/{topic}")
-    print(f"Getting summary for topic: [{topic.strip('.csv')}]")
+    print(f"Getting summary for topic: [{topic.split('.csv')[0]}]")
     summary = get_summary(df)
-    html = """
+    html = f"""
+    
             <html>
               <head></head>
-              <h1>{}</h1>
-              <h3>About {}</h1>
+              <h1>{topic.split('.csv')[0].strip('#').upper()}</h1>
+              <h3>About {topic.split('.csv')[0]}</h1>
               <hr style="height:2px;border-width:1px;color:gray;background-color:gray">
               <body>
                 <p>
-                {}
+                {summary}
                 </p>
                 <hr style="height:2px;border-width:1px;color:gray;background-color:gray">
                 <hr>
               </body>
               
             </html>
-        """.format(topic.split('.csv')[0].strip('#').upper(), topic.strip('.csv'), summary)
+        """
 
     body += html
 
