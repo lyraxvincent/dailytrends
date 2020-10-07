@@ -76,6 +76,12 @@ def text_processdig(text):
 
 def get_summary(df):
 
+    # sample df to 30 rows
+    if len(df) > 30:
+        df = df.sample(30, random_state=30).reset_index(drop=True)
+    else:
+        pass
+
     # designing documents of preprocessed texts joined together
     doc_without_numbers = ""
 
