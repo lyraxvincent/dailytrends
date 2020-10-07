@@ -1,13 +1,7 @@
 tweepy
 pandas
-time
-random
 nltk
-re
 textblob
-heapq
 tqdm
 language_tool_python
-smtplib
-datetime
 schedule
