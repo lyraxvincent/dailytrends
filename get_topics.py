@@ -3,6 +3,7 @@ import tweepy
 import json
 import authconfig
 import pandas as pd
+import os
 
 # tweepy authentication
 
@@ -47,6 +48,12 @@ try:
 except KeyError as e:
     print(f"There is no trending topic information for the currently selected city/country: {e}")
 
-# save the topics as csv file(pandas series)
-topics = pd.DataFrame({'topics': topics})
-topics.to_csv("csv files/topics.csv", index=False)
+# save(if not available) or append to topics.csv(if file already available)
+if 'topics.csv' in os.listdir("csv files/"):
+    topicfile = pd.read_csv("csv files/topics.csv")
+    for i, topic in enumerate(topics):
+        topicfile.loc[len(topicfile) + i, 'topics'] = topic
+    topicfile.to_csv("csv files/topics.csv", index=False)
+else:
+    topics = pd.DataFrame({'topics': topics})
+    topics.to_csv("csv files/topics.csv", index=False)
