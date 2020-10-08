@@ -1,14 +1,16 @@
 
 import tweepy
 import json
-import authconfig
+#import authconfig
 import pandas as pd
 import os
 
 # tweepy authentication
 
-auth = tweepy.OAuthHandler(authconfig.consumer_key, authconfig.consumer_secret)
-auth.set_access_token(authconfig.access_key, authconfig.access_secret)
+#auth = tweepy.OAuthHandler(authconfig.consumer_key, authconfig.consumer_secret)
+auth = tweepy.OAuthHandler(os.environ.get('consumer_key'), os.environ.get('consumer_secret'))
+#auth.set_access_token(authconfig.access_key, authconfig.access_secret)
+auth.set_access_token(os.environ.get('access_key'), os.environ.get('access_secret'))
 api = tweepy.API(auth)
 
 # design two dictionaries to hold woeid of places (countries and cities)

@@ -2,10 +2,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
 import pandas as pd
-import authconfig   # script
+#import authconfig   # script
 import get_topics   # script
 import datetime
 from summarize import get_summary   # script
+import os
 
 # today's date
 now = datetime.datetime.now()
@@ -15,7 +16,8 @@ topics = pd.read_csv("csv files/sortopics.csv")
 topics = [topic for topic in list(topics.topics)]
 
 toaddr = ['vinsvincybiex@gmail.com']
-fromaddr = authconfig.email
+#fromaddr = authconfig.email
+fromaddr = os.environ.get('email')
 subject = "Trending topics in {} for {}".format(get_topics.country, now.strftime("%Y-%m-%d"))
 
 msg = MIMEMultipart('alternative')
@@ -59,7 +61,8 @@ smtpserver = smtplib.SMTP('smtp.gmail.com', 587)
 smtpserver.ehlo()
 smtpserver.starttls()
 smtpserver.ehlo()
-smtpserver.login(authconfig.email, authconfig.emailpass)
+#smtpserver.login(authconfig.email, authconfig.emailpass)
+smtpserver.login(fromaddr, os.environ.get('emailpass'))
 
 for addr in toaddr:
     smtpserver.sendmail(fromaddr, addr, msg.as_string())
