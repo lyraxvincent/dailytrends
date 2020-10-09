@@ -1,6 +1,5 @@
 authconfig.py
 __pycache__
-*.csv
 test.py
 notes.txt
 *.ipynb_checkpoints
