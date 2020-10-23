@@ -5,6 +5,10 @@ import json
 import pandas as pd
 import os
 
+# make csv files dir if it does not exist
+if not os.path.exists("csv files"):
+    os.mkdir("csv files")
+
 # tweepy authentication
 
 #auth = tweepy.OAuthHandler(authconfig.consumer_key, authconfig.consumer_secret)
