@@ -9,6 +9,6 @@ The news articles are then sent to a user's inbox (email in this case) at the en
 
 -----
 
-This project is deployed on heroku on this [link.]("https://dtrends.herokuapp.com/")  
+This project is deployed on heroku on this [link.](https://dtrends.herokuapp.com/)  
 
-**NOTE:** There's no interface on the given linkas the project is a combination of python scripts without a web app.
+**NOTE:** There's no interface on the given link as the project is a combination of python scripts without a web app.
